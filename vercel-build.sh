@@ -1,26 +1,26 @@
 #!/bin/bash
 set -e
 
-echo "🦀 Installing Rust..."
+echo "🔧 Setting up environment..."
 export RUSTUP_HOME="$HOME/.rustup"
 export CARGO_HOME="$HOME/.cargo"
 export PATH="$CARGO_HOME/bin:$PATH"
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+echo "🦀 Installing Rust..."
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal
 source "$CARGO_HOME/env"
 
-echo "✅ Rust installed:"
+echo "✅ Rust version:"
 rustc --version
-cargo --version
 
 echo "📦 Installing Trunk..."
-cargo install trunk --locked
+cargo install trunk --force
 
 echo "🎯 Adding WASM target..."
 rustup target add wasm32-unknown-unknown
 
-echo "🔨 Building project..."
-trunk build --release
+echo "🔨 Building with Trunk..."
+trunk build --release --public-url "/"
 
-echo "✅ Build complete!"
+echo "✅ Build complete! Contents of dist/:"
 ls -la dist/
