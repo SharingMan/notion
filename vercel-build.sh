@@ -2,8 +2,16 @@
 set -e
 
 echo "🦀 Installing Rust..."
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-source $HOME/.cargo/env
+export RUSTUP_HOME="$HOME/.rustup"
+export CARGO_HOME="$HOME/.cargo"
+export PATH="$CARGO_HOME/bin:$PATH"
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+source "$CARGO_HOME/env"
+
+echo "✅ Rust installed:"
+rustc --version
+cargo --version
 
 echo "📦 Installing Trunk..."
 cargo install trunk --locked
