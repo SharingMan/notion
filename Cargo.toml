@@ -1,0 +1,40 @@
+[package]
+name = "notion-cafe"
+version = "0.1.0"
+edition = "2021"
+authors = ["Shinkai <your-email@example.com>"]
+description = "Notion + Calendar integration app"
+license = "MIT"
+repository = "https://github.com/yourusername/notion-cafe"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+yew-router = "0.18"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["wasmbind", "serde"] }
+gloo = "0.11"
+gloo-net = "0.5"
+gloo-storage = "0.3"
+log = "0.4"
+wasm-logger = "0.2"
+once_cell = "1.19"
+anyhow = "1.0"
+thiserror = "1.0"
+
+[dependencies.uuid]
+version = "1.7"
+features = ["v4", "serde"]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
