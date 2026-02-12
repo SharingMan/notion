@@ -51,8 +51,8 @@ echo ""
 echo "🔨 Building project with Trunk..."
 echo ""
 
-# Build the project
-trunk build --release
+# Build the project with explicit public URL
+trunk build --release --public-url ""
 
 echo ""
 echo "========================================="
