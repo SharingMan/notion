@@ -23,9 +23,21 @@
 - **Trunk** - Rust WASM 构建工具
 - **Notion API** - 数据同步
 
-## 🚀 快速开始
+## 🚀 快速部署
 
-### 本地开发
+| 平台 | 难度 | 特点 |
+|------|------|------|
+| [Cloudflare Pages](FREE_DEPLOY_GUIDE.md#方案一cloudflare-pages强烈推荐) | ⭐ 最简单 | **完全免费，无限流量，全球CDN** |
+| [Vercel](FREE_DEPLOY_GUIDE.md#方案二vercel) | ⭐⭐ 中等 | 功能强大，生态好 |
+| [Netlify](FREE_DEPLOY_GUIDE.md#方案三netlify) | ⭐ 简单 | 极简体验，支持拖拽部署 |
+| [GitHub Pages](FREE_DEPLOY_GUIDE.md#方案四github-pages) | ⭐⭐ 中等 | 完全免费，无需第三方 |
+| [Railway](RAILWAY_DEPLOY.md) | ⭐⭐ 中等 | 需要付费 |
+
+👉 **新手推荐 Cloudflare Pages**，一键部署，国内访问最快！
+
+详细部署指南：[FREE_DEPLOY_GUIDE.md](FREE_DEPLOY_GUIDE.md)
+
+## 💻 本地开发
 
 ```bash
 # 克隆仓库

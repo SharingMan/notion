@@ -1,0 +1,22 @@
+[build]
+command = "curl https://sh.rustup.rs -sSf | sh -s -- -y && source $HOME/.cargo/env && cargo install trunk && rustup target add wasm32-unknown-unknown && trunk build --release"
+publish = "dist/"
+
+[build.environment]
+RUST_VERSION = "1.75.0"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[[headers]]
+for = "*.wasm"
+[headers.values]
+Content-Type = "application/wasm"
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "*.js"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
