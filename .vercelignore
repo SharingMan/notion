@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Rust
+target/
+Cargo.lock
+
+# Documentation
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts (will be created during build)
+dist/
+
+# API folder (not needed for static deployment)
+_api/
+
+# Scripts
+*.sh
+!vercel-build.sh
+
+# GitHub
+.github/
