@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Vercel Build Script for Rust + WASM project
-# This script installs Rust, builds the project with Trunk
+# Vercel Build Script for Rust + WASM (Yew) project
 
 set -e
 
@@ -14,52 +13,57 @@ export RUSTUP_HOME="$HOME/.rustup"
 export CARGO_HOME="$HOME/.cargo"
 export PATH="$CARGO_HOME/bin:$PATH"
 
-# Check if Rust is already installed (cached)
+# Install Rust if not cached
 if [ -f "$CARGO_HOME/bin/cargo" ]; then
     echo "✅ Rust found in cache"
 else
     echo "🦀 Installing Rust..."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
         --default-toolchain stable \
-        --profile minimal \
-        --no-modify-path
+        --profile minimal
 fi
 
-# Source cargo environment
+# Source cargo
 source "$CARGO_HOME/env"
 
-# Verify installation
+# Show versions
 echo ""
-echo "📋 Rust Version:"
+echo "📋 Versions:"
 rustc --version
 cargo --version
-echo ""
 
-# Install trunk if not present
+# Install trunk
 if [ -f "$CARGO_HOME/bin/trunk" ]; then
-    echo "✅ Trunk found in cache"
+    echo "✅ Trunk found, updating..."
+    cargo install trunk --force
 else
     echo "📦 Installing Trunk..."
-    cargo install trunk --force
+    cargo install trunk --locked
 fi
 
-# Add WASM target (idempotent)
+# Add WASM target
 echo "🎯 Adding WASM target..."
-rustup target add wasm32-unknown-unknown || true
+rustup target add wasm32-unknown-unknown
 
 echo ""
-echo "🔨 Building project with Trunk..."
+echo "🔨 Building with Trunk..."
 echo ""
 
-# Build the project with explicit public URL
-trunk build --release --public-url ""
+# Clean previous build
+rm -rf dist/
+
+# Build with Trunk - using relative paths for Vercel
+trunk build --release
 
 echo ""
 echo "========================================="
-echo "✅ Build Complete!"
+echo "📁 Build output:"
 echo "========================================="
+ls -la dist/
+
 echo ""
-echo "📁 Output files:"
-ls -lh dist/
+echo "🔍 Checking generated HTML:"
+head -50 dist/index.html
+
 echo ""
-echo "🎉 Ready for deployment!"
+echo "✅ Build complete!"

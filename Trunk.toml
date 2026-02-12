@@ -2,9 +2,3 @@
 target = "index.html"
 dist = "dist"
 public_url = "/"
-filehash = true
-inject_scripts = true
-
-[serve]
-port = 8080
-open = true
