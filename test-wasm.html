@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WASM Test</title>
+</head>
+<body>
+    <h1>WASM Loading Test</h1>
+    <div id="status">Checking...</div>
+    <div id="files"></div>
+
+    <script>
+        // 尝试加载 WASM 文件
+        async function checkWasm() {
+            const status = document.getElementById('status');
+            const files = document.getElementById('files');
+
+            // 列出所有 .wasm 文件
+            const wasmFiles = [];
+            const jsFiles = [];
+
+            // 获取当前页面所有脚本
+            document.querySelectorAll('script').forEach(s => {
+                if (s.src) {
+                    if (s.src.includes('.wasm')) wasmFiles.push(s.src);
+                    if (s.src.includes('.js')) jsFiles.push(s.src);
+                }
+            });
+
+            files.innerHTML = `
+                <h3>JS Files found: ${jsFiles.length}</h3>
+                <ul>${jsFiles.map(f => `<li>${f}</li>`).join('')}</ul>
+
+                <h3>WASM Files found: ${wasmFiles.length}</h3>
+                <ul>${wasmFiles.map(f => `<li>${f}</li>`).join('')}</ul>
+            `;
+
+            // 尝试获取目录列表（可能失败）
+            try {
+                const response = await fetch('./');
+                const text = await response.text();
+                status.innerHTML = '<p style="color: green;">Directory listing available (check console)</p>';
+                console.log('Directory content:', text);
+            } catch (e) {
+                status.innerHTML = `<p style="color: orange;">Cannot list directory: ${e.message}</p>`;
+            }
+        }
+
+        checkWasm();
+    </script>
+</body>
+</html>

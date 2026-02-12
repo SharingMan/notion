@@ -1,7 +1,7 @@
 [build]
 target = "index.html"
 dist = "dist"
-public_url = ""
+public_url = "/"
 filehash = true
 inject_scripts = true
 
