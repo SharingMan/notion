@@ -1,16 +1,18 @@
 {
   "version": 2,
   "name": "notion-cafe",
-  "builds": [
+  "buildCommand": "sh vercel-build.sh",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "echo 'No npm dependencies'",
+  "rewrites": [
     {
-      "src": "Dockerfile",
-      "use": "@vercel/static-build"
-    }
-  ],
-  "routes": [
+      "source": "/api/notion/(.*)",
+      "destination": "/api/notion.js"
+    },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -36,5 +38,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/notion.js": {
+      "runtime": "edge"
+    }
+  }
 }

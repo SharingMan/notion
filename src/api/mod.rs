@@ -1,24 +1,57 @@
 use gloo_net::http::Request;
 use serde_json::json;
+use web_sys::window;
 
 use crate::types::{CalendarEvent, DatabaseConfig, NotionDatabase, NotionListResponse, NotionPage, extract_event_from_page};
 
-const NOTION_API_BASE: &str = "https://api.notion.com/v1";
 const NOTION_VERSION: &str = "2022-06-28";
+
+/// 获取 Notion API 基础 URL
+/// 生产环境使用 Vercel Edge Function 代理解决 CORS
+fn get_notion_api_base() -> String {
+    // 检测是否在 Vercel 环境
+    if let Ok(hostname) = get_hostname() {
+        if hostname.contains("vercel.app") || hostname.contains("now.sh") {
+            // 使用相对路径调用 Vercel Edge Function
+            return "/api/notion".to_string();
+        }
+    }
+
+    // 默认使用直接 API（本地开发）
+    "https://api.notion.com/v1".to_string()
+}
+
+/// 获取当前主机名
+fn get_hostname() -> Result<String, String> {
+    if let Some(window) = window() {
+        if let Ok(host) = window.location().host() {
+            return Ok(host);
+        }
+    }
+    Err("无法获取主机名".to_string())
+}
 
 /// Notion API 客户端
 pub struct NotionClient {
     api_key: String,
+    base_url: String,
 }
 
 impl NotionClient {
     pub fn new(api_key: String) -> Self {
-        Self { api_key }
+        let base_url = get_notion_api_base();
+        Self { api_key, base_url }
+    }
+
+    /// 手动设置代理 URL
+    pub fn with_proxy(mut self, proxy_url: String) -> Self {
+        self.base_url = proxy_url;
+        self
     }
 
     /// 获取所有可访问的数据库
     pub async fn list_databases(&self) -> Result<Vec<NotionDatabase>, String> {
-        let url = format!("{}/databases", NOTION_API_BASE);
+        let url = format!("{}/databases", self.base_url);
 
         let response = Request::get(&url)
             .header("Authorization", &format!("Bearer {}", self.api_key))
@@ -42,7 +75,7 @@ impl NotionClient {
 
     /// 获取单个数据库详情
     pub async fn get_database(&self, database_id: &str) -> Result<NotionDatabase, String> {
-        let url = format!("{}/databases/{}", NOTION_API_BASE, database_id);
+        let url = format!("{}/databases/{}", self.base_url, database_id);
 
         let response = Request::get(&url)
             .header("Authorization", &format!("Bearer {}", self.api_key))
@@ -64,7 +97,7 @@ impl NotionClient {
 
     /// 查询数据库中的页面
     pub async fn query_database(&self, database_id: &str) -> Result<Vec<NotionPage>, String> {
-        let url = format!("{}/databases/{}/query", NOTION_API_BASE, database_id);
+        let url = format!("{}/databases/{}/query", self.base_url, database_id);
 
         let body = json!({
             "page_size": 100
@@ -101,7 +134,7 @@ impl NotionClient {
         title: &str,
         date: &str,
     ) -> Result<NotionPage, String> {
-        let url = format!("{}/pages", NOTION_API_BASE);
+        let url = format!("{}/pages", self.base_url);
 
         let body = json!({
             "parent": {
@@ -154,7 +187,7 @@ impl NotionClient {
         title: Option<&str>,
         date: Option<&str>,
     ) -> Result<NotionPage, String> {
-        let url = format!("{}/pages/{}", NOTION_API_BASE, page_id);
+        let url = format!("{}/pages/{}", self.base_url, page_id);
 
         let mut properties = serde_json::Map::new();
 
@@ -202,7 +235,7 @@ impl NotionClient {
 
     /// 删除页面（实际是将页面归档）
     pub async fn delete_page(&self, page_id: &str) -> Result<(), String> {
-        let url = format!("{}/pages/{}", NOTION_API_BASE, page_id);
+        let url = format!("{}/pages/{}", self.base_url, page_id);
 
         let body = json!({
             "archived": true
